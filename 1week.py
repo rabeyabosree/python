@@ -152,39 +152,34 @@
 #         break
 
 
+import requests
 
-import time;
+def convert_currency():
+    base = input("Enter the base currency (e.g., USD): ").strip().upper()
+    target = input("Enter the target currency (e.g., BDT): ").strip().upper()
 
-test_sentence = "Practice makes a men perfect"
+    try:
+        amount = float(input("Enter the amount to convert: "))
+    except ValueError:
+        print("Invalid amount. Please enter a number.")
+        return
 
-print("Typing speed test started...")
-print("\n Type this sentence")
-print(test_sentence)
-print("\n Press enter to start....")
+    # ✅ Public API — no key needed
+    url = f"https://api.exchangerate.host/latest?base={base}"
 
+    response = requests.get(url)
 
-start_time = time.time()
+    if response.status_code == 200:
+        data = response.json()
+        print("API Response:", data)  # optional: remove later
 
-typed = input("Start typing :")
+        if "rates" in data and target in data["rates"]:
+            rate = data["rates"][target]
+            converted = amount * rate
+            print(f"{amount} {base} is equal to {converted:.2f} {target}")
+        else:
+            print(f"Currency '{target}' not found in exchange rates.")
+    else:
+        print(f"API request failed with status code {response.status_code}.")
 
-end_time = time.time()
-
-time_taken = end_time - start_time
-
-words = typed.split()
-wpm = (len(words) / time_taken) * 60
-
-correct_charts = 0
-for i in range(min(len(test_sentence), len(typed))):
-    if test_sentence[i] == typed[i]:
-        correct_charts += 1
-
-accuracy = (correct_charts / len(test_sentence)) * 100
-
-print("\n ----Result----")
-print(f"Time taken: {round(time_taken, 2)} seconds")
-print(f"Your typing speed is {round(wpm, 2)} words per minute")
-print(f"You accurately typed {correct_charts} charaters out of { len(test_sentence)}")
-
-
-
+convert_currency()
