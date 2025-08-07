@@ -114,15 +114,88 @@
 
 
 
-text = input("Enter a sentence : ").lower()
+# text = input("Enter a sentence : ").lower()
+
+# words = text.split()
+
+# freq = {}
+
+# for word in words :
+#     freq[word] = freq.get(word , 0 ) + 1
+
+# print("\n word frequency")
+# for word, count in freq.items():
+#     print(f"{word} {count}")
+
+
+# emails = ["ds@example.com", "bfhsd@example.com", "sdh@example.com" , "djf@example.com"]
+
+# unique_emails = set(emails)
+
+# print("Unique Emails : ")
+# for email in emails :
+#     print(email)
+
+
+
+# user1_freind = {"sdfja", "fsdhkj", "fdskjf", "common"}
+
+# user2_freind =  {"dsajkf", "dsafjsk", "slkfa", "common"}
+
+# common = user1_freind.intersection(user2_freind)
+
+# print('common freind :' , common)
+
+
+# blog_posts = [
+#     {"title" : "react" , "tags": ["code", "reat", "dev"]},
+#     {"title" : "java" , "tags": ["code", "reat", "dev", "jsdh"]},
+#     {"title" : "python" , "tags": ["code", "reat", "dev"]},
+#     {"title" : "Ruby" , "tags": ["code", "reat", "dev"]}
+# ]
+
+# all_tags = set()
+
+# for post in blog_posts:
+#     all_tags.update(post["tags"])
+
+# print("Total Unique Tags : ", len(all_tags))
+# print("all tags", all_tags)
+
+
+# try:
+#     s = set()
+#     s.add({"name": "rabeya"})
+
+# except TypeError as e:
+#     print("error", e)
+
+
+students = {}
+
+def add_student(name, age, grade):
+    students[name] = {'age': age, grade: grade}
+
+
+add_student("rabeya", 34, "11th")
+add_student("rabeya", 34, "11th")
+add_student("rabeya", 34, "11th")
+
+print(students)
+
+text = "pyrhon is easy and python is powerful"
 
 words = text.split()
 
+lenth = sum(len(word) for word in words)
+
+total_length = 0
+
 freq = {}
 
-for word in words :
-    freq[word] = freq.get(word , 0 ) + 1
+for word in words:
+    for let in word:
+        total_length += 1
 
-print("\n word frequency")
-for word, count in freq.items():
-    print(f"{word} {count}")
+print(total_length)
+print(lenth)
