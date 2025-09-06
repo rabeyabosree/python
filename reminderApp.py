@@ -98,6 +98,12 @@ class ReminderApp(tk.Tk):
 
 def refresh_table():
     pass
+def validate_datetime():
+    
+    pass
+
+def notify():
+    pass
 
 
 def add_reminder(self):
@@ -141,17 +147,83 @@ def delete_selected(self):
     del self.reminders[idx]
     self._refresh_table()
     self.status_var.set(f"Deleted: {task}")
+
 def snooze_selected(self):
-    pass
+    sel = self.tree.selection()
+    if not sel :
+        messagebox.showinfo("Snoose", "Select a reminder from the list")
+        return
+    idx = int(sel[0])
+    r = self.reminders[idx]
+    dt = self.validate_datetime(r["date"], r["time"])
+
+    if not dt:
+        messagebox.showwarning("Snoose", "Invalid date/time on selected reminder")
+        return
+    dt = dt + timedelta(minutes=5)
+    r["date"] = dt.strftime("%Y-%m-%d")
+    r["time"] = dt.strftime("%H-%M")
+    r["done"] = False
+    self.refresh_table()
+    self.status_Var.set(f"Snoozed 5 min: {r["task"] , r['date']}, {r['time']}")
+
 def save_to_file(self):
-    pass
+    path = filedialog.asksaveasfilename(defaultextension=".json",filetypes = [("JSON", "*.json")],title = "Save Reminders")
+    if not path:
+        return
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(self.reminders, f, ensure_ascii=False, indent=2)
+            self.status_var.set(f"saved {len(self.reminders)} reminders to {os.path.basename(path)}")
+    except Exception as e:
+        messagebox.showerror("save error", str(e))
+
 
 def start_checking(self):
-    pass
+    if self.checking:
+        return 
+    self.checking = True
+    self.start_btn.configure(state="normal")
+    self.stop_btn.configure(state="normal")
+    self.status_var.set("Reminder checker : RUNNING")
+    self.schedule_check()
+
 
 def stop_checking(self):
-    pass
+    self.checking = False
+    if self.check_job is not None:
+        self.after_cancel(self.check_job)
+        self.check_job = None
 
+        self.start_btn.configure(state="normal")
+        self.stop_btn.configure(state="disabled")
+        self.status_var.set("Reminder checker stopped")
+
+def schedule_check(self):
+    if not self.checking:
+        return
+    self.check_reminders()
+    self.check_jon = self.after(CHECK_INTERVAL_SECONDS * 1000, self.schedule_check)
+
+def check_reminders(self):
+    now = datetime.now()
+    fired_any = False
+
+    for r in self.reminder:
+        if r.get("done"):
+            continue
+        dt = self.validate_datetime(r["date"], r["time"])
+        if not dt:
+            continue
+
+        if now >= dt:
+            fired_any = True
+            msg = f"{r['task']} scheduled at {r['date']} {r['time']}"
+            self.notify("reminder" , msg)
+
+            if r['repeat'] == "Daily":
+                dt_next = dt + timedelta(days=1)
+                
 
 
 # main 
